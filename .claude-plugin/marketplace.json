@@ -1,0 +1,12 @@
+{
+  "name": "aishelf-tools",
+  "description": "AIShelf plugins for Claude Code — shared AI workflows, rules, skills, and prompts.",
+  "owner": { "name": "Vedant Patil", "url": "https://aishelf.dev" },
+  "plugins": [
+    {
+      "name": "aishelf",
+      "source": ".",
+      "description": "Connect Claude to your team's shared AI workflows, rules, skills, and prompts via AIShelf."
+    }
+  ]
+}
