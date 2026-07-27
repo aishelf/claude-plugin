@@ -36,7 +36,7 @@ output when you need to parse the result rather than show it to the user.
 
 - `aishelf registry list` — list connected registries.
 - `aishelf registry connect <owner/repo> [--create] [--private] [--description <text>]` — connect a registry (optionally creating the GitHub repo first). Requires GitHub write access.
-- `aishelf registry sync <owner/repo>` — pull the latest changes for a connected registry.
+- `aishelf registry sync <owner/repo>` — pull the latest changes for a connected registry. Pass `--all` instead of `<owner/repo>` to sync every connected registry in parallel.
 - `aishelf registry disconnect <owner/repo>` — remove the local clone and tracking entry (does not touch GitHub).
 - `aishelf registry trust <owner/repo>` / `aishelf registry untrust <owner/repo>` — trust a registry to auto-accept its security violations, or revoke that trust.
 

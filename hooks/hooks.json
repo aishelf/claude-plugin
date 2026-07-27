@@ -4,13 +4,13 @@
       {
         "matcher": "startup",
         "hooks": [
-          { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/materialize-on-session-start.sh" }
+          { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/sync-and-materialize-on-session-start.sh" }
         ]
       },
       {
         "matcher": "resume",
         "hooks": [
-          { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/materialize-on-session-start.sh" }
+          { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/sync-and-materialize-on-session-start.sh" }
         ]
       }
     ]
