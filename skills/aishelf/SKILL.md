@@ -1,6 +1,6 @@
 ---
 name: aishelf
-description: Use when working with AIShelf — a team registry system for shared AI workflows, rules, skills, and prompts, managed via the `aishelf` CLI. Covers browsing/connecting/syncing registries and packages, reading or authoring resources, and materializing registry content (e.g. skills) natively into this host's agent directories (`~/.claude/skills`, etc.). Consult this whenever the user mentions AIShelf, connecting a registry, syncing team resources, or materializing shared skills/rules locally.
+description: Use when working with AIShelf — a team registry system for shared AI workflows, rules, skills, and prompts, managed via the `aishelf` CLI. Covers browsing/connecting/syncing registries and packages, reading or authoring resources, and materializing registry content (e.g. skills) natively into this host's agent directories (`~/.claude`, `~/.cursor`, `~/.agents`). Consult this whenever the user mentions AIShelf, connecting a registry, syncing team resources, or materializing shared skills/rules locally.
 ---
 
 # AIShelf
@@ -16,11 +16,11 @@ command -v aishelf
 ```
 
 **If absent**: tell the user AIShelf isn't set up on this machine and mention
-`npm install -g @aishelf/cli && aishelf install` gets it running (Docker-backed
-by default). **Never run an install command yourself** — not
-`npm install -g @aishelf/cli`, not `aishelf install`, not any other setup step
-— unless the user explicitly asks for it. Just check and report; let the user
-decide.
+`npm install -g @aishelf/cli && aishelf service install` gets it running
+(Docker-backed by default). **Never run an install command yourself** — not
+`npm install -g @aishelf/cli`, not `aishelf service install`, not any other
+setup step — unless the user explicitly asks for it. Just check and report;
+let the user decide.
 
 **If present**, all commands below are safe to run directly to answer the
 user's question or carry out their request — pass `--json` for structured
@@ -28,9 +28,11 @@ output when you need to parse the result rather than show it to the user.
 
 ## Auth
 
-- `aishelf auth login` — sign in with GitHub via the browser (interactive; only run if the user asks to log in).
-- `aishelf auth status` — check whether the user is currently authenticated.
-- `aishelf auth logout` — sign out and clear the stored token.
+These are top-level commands, not nested under an `auth` group.
+
+- `aishelf login` — sign in with GitHub via the browser (interactive; only run if the user asks to log in).
+- `aishelf status` — check whether the user is currently authenticated.
+- `aishelf logout` — sign out and clear the stored token.
 
 ## Registries
 
@@ -59,13 +61,30 @@ output when you need to parse the result rather than show it to the user.
 ## Materialization
 
 Registry resources live in AIShelf's own store until materialized — symlinked
-into the host directories each agent actually reads from (e.g. `~/.claude/skills`,
-`~/.cursor/skills`, `~/.continue/skills`).
+into the host directories each agent actually reads from: `~/.claude` (Claude
+Code), `~/.cursor` (Cursor), and `~/.agents` (shared by both Devin and
+Antigravity — they're independently toggleable but resolve to the same host
+folder).
 
-- `aishelf materialize apply [owner/repo] [packageId] [type] [name] [--claude-code] [--cursor] [--continue]` — materialize the given scope (everything connected, if no scope given).
-- `aishelf materialize list` — show currently materialized links across all detected surfaces.
-- `aishelf materialize clean [owner/repo] [packageId] [type] [name] [--claude-code] [--cursor] [--continue]` — remove managed materialized links, scoped or all.
+- `aishelf materialize apply [owner/repo] [packageId] [type] [name] [--claude-code] [--cursor] [--devin] [--antigravity]` — materialize the given scope (everything connected, if no scope given). This always both creates what's missing **and** prunes what's stale in the same pass — there is no separate clean/gc command.
+- `aishelf materialize list [--claude-code] [--cursor] [--devin] [--antigravity]` — show currently materialized links across all detected surfaces.
 
 After connecting or syncing a registry that has skills, suggest running
 `aishelf materialize apply` so they become natively discoverable — don't run
 it automatically without being asked.
+
+## Materialize Configuration
+
+Automatic materialize (the kind that runs on `registry connect`/`registry sync`)
+is governed by a persisted config. **Explicit** actions — `materialize apply`
+itself, and every `materialize config` mutation below — always run
+regardless of this config's `enabled` flag; only the *automatic* trigger on
+connect/sync respects it. Every mutating command below reactively re-applies
+materialize immediately after persisting the change, so a toggle takes effect
+right away with no separate `apply` needed.
+
+- `aishelf materialize config get [--enabled] [--surfaces] [--disabled-registries] [--per-resource-type]` — print the whole config, or a single field.
+- `aishelf materialize config enable` / `aishelf materialize config disable` — turn automatic materialize on registry connect/sync on or off.
+- `aishelf materialize config surface enable|disable|list [<surface>] [--all]` — control which surfaces (`claude-code`/`cursor`/`devin`/`antigravity`) automatic materialize targets. `<surface>` and `--all` are mutually exclusive; one is required for `enable`/`disable`.
+- `aishelf materialize config registry-source enable|disable|list [<owner/repo>] [--all]` — control which connected registries participate in *unscoped* automatic materialize (a `materialize apply <owner/repo> ...` with an explicit registry always ignores this).
+- `aishelf materialize config resource-type enable|disable|list [<type>] [--all]` — control which resource types (`workflows`/`rules`/`skills`/`prompts`) participate in unscoped automatic materialize (same explicit-scope-overrides-config rule as above).
