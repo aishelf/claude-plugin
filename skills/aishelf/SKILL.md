@@ -1,14 +1,19 @@
 ---
 name: aishelf
-description: Use when working with AIShelf — a team registry system for shared AI workflows, rules, skills, and prompts, managed via the `aishelf` CLI. Covers browsing/connecting/syncing registries and packages, reading or authoring resources, and materializing registry content (e.g. skills) natively into this host's agent directories (`~/.claude`, `~/.cursor`, `~/.agents`). Consult this whenever the user mentions AIShelf, connecting a registry, syncing team resources, or materializing shared skills/rules locally.
+description: Use when working with AIShelf — a team registry system for shared AI resources (currently workflows, rules, skills, and prompts, with more types possible over time), managed via the `aishelf` CLI. Covers browsing/connecting/syncing registries and packages, reading or authoring resources of any type, and materializing registry content natively into this host's agent directories (`~/.claude`, `~/.cursor`, `~/.agents`). Consult this whenever the user mentions AIShelf, connecting a registry, syncing team resources, or materializing shared resources locally.
 ---
 
 # AIShelf
 
-AIShelf is a registry system for AI workflows, rules, skills, and prompts that a
-team shares and keeps in sync via GitHub-backed registries. Everything happens
+AIShelf is a registry system for AI resources — workflows, rules, skills, and
+prompts today, and potentially other types the team adds later — that a team
+shares and keeps in sync via GitHub-backed registries. Everything happens
 through the host-installed `aishelf` CLI — there is no other integration path
-from this session.
+from this session. Nothing below is skill-specific: every command and concept
+here applies uniformly to whatever resource types AIShelf currently supports.
+If a resource type doesn't match what's listed in this doc, trust the CLI's
+own output over this doc — `aishelf materialize config resource-type list`
+always prints the live, current list.
 
 **Before doing anything else, check the CLI is available:**
 ```
@@ -48,10 +53,10 @@ These are top-level commands, not nested under an `auth` group.
 - `aishelf package create <owner/repo> <packageId>` — create a package and push it to GitHub.
 - `aishelf package delete <owner/repo> <packageId>` — permanently delete a package, pushed to GitHub.
 
-## Resources (workflows, rules, skills, prompts)
+## Resources (workflows, rules, skills, prompts today — see the note above if that ever changes)
 
 - `aishelf resource list [--registry <owner/repo>] [--package <packageId>] [--type <type>]` — filter independently by registry, package, and/or type, in any combination.
-- `aishelf resource get <owner/repo> <packageId> <type> <name> [--path <fs-path>]` — print a resource's content. For **skills** (folders, not single files), pass `--path` to read a specific supporting file if the entry file references one — never substitute a workspace file for skill content.
+- `aishelf resource get <owner/repo> <packageId> <type> <name> [--path <fs-path>]` — print a resource's content. Some resource types are folder-shaped (currently only `skills`; a future type could be too) rather than a single file — for those, pass `--path` to read a specific supporting file if the entry file references one. Never substitute a workspace file for a resource's actual content.
 - `aishelf resource init <owner/repo> <packageId> <type> <name>` — create a new local draft.
 - `aishelf resource edit <owner/repo> <packageId> <type> <name> [--content <text>] [--path <fs-path>]` — edit a draft (reads piped stdin if `--content` is omitted).
 - `aishelf resource copy <owner/repo> <packageId> <type> <name> [--from <local-path>]` — copy a file/folder into a draft, from a local path or from the existing registry resource.
@@ -69,9 +74,22 @@ folder).
 - `aishelf materialize apply [owner/repo] [packageId] [type] [name] [--claude-code] [--cursor] [--devin] [--antigravity]` — materialize the given scope (everything connected, if no scope given). This always both creates what's missing **and** prunes what's stale in the same pass — there is no separate clean/gc command.
 - `aishelf materialize list [--claude-code] [--cursor] [--devin] [--antigravity]` — show currently materialized links across all detected surfaces.
 
-After connecting or syncing a registry that has skills, suggest running
-`aishelf materialize apply` so they become natively discoverable — don't run
-it automatically without being asked.
+After connecting or syncing a registry, suggest running `aishelf materialize
+apply` so its content — whatever resource types it contains — becomes
+natively discoverable in this host's tools. Don't run it automatically
+without being asked.
+
+**A resource you just synced or materialized might not be immediately
+usable as a native skill/command in *this* session** — Claude Code's own
+timing for re-scanning `~/.claude/skills`/`~/.claude/commands` after a
+mid-session filesystem change isn't something this doc can guarantee. If the
+user wants to use a resource you just connected, synced, or materialized and
+it isn't showing up as invokable yet, don't tell them it's unavailable —
+fall back to `aishelf resource get <owner/repo> <packageId> <type> <name>`
+(or `aishelf materialize list` to find its materialized path) and use its
+content directly. It always works, regardless of the current session's
+discovery state, and treats the CLI as the source of truth rather than
+waiting on a re-scan that may only happen next session.
 
 ## Materialize Configuration
 
