@@ -9,7 +9,17 @@ AIShelf is a registry system for AI resources — workflows, rules, skills, and
 prompts today, and potentially other types the team adds later — that a team
 shares and keeps in sync via GitHub-backed registries. Everything happens
 through the host-installed `aishelf` CLI — there is no other integration path
-from this session. Nothing below is skill-specific: every command and concept
+from this session.
+
+**Never read, write, or otherwise access files under `~/.aishelf/` (or
+wherever AIShelf's local storage lives) directly** — not to peek at a
+resource's content, not to check what's connected, not even just to look.
+Always go through the CLI instead, even when a raw file read looks faster or
+a path is visible in some output. The CLI enforces validation, git sync, and
+config invariants that direct filesystem access silently bypasses, and its
+on-disk layout is an implementation detail that can change without notice.
+
+Nothing below is skill-specific: every command and concept
 here applies uniformly to whatever resource types AIShelf currently supports.
 If a resource type doesn't match what's listed in this doc, trust the CLI's
 own output over this doc — `aishelf materialize config resource-type list`
