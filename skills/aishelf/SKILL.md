@@ -42,7 +42,7 @@ These are top-level commands, not nested under an `auth` group.
 ## Registries
 
 - `aishelf registry list` — list connected registries.
-- `aishelf registry connect <owner/repo> [--create] [--private] [--description <text>]` — connect a registry (optionally creating the GitHub repo first). Requires GitHub write access.
+- `aishelf registry connect <owner/repo> [--create] [--private] [--public] [--description <text>]` — connect a registry (optionally creating the GitHub repo first). Requires GitHub write access. When creating, the repo is private by default; pass `--public` to create it public instead. `--private` and `--public` are mutually exclusive — passing both is a CLI error.
 - `aishelf registry sync <owner/repo>` — pull the latest changes for a connected registry. Pass `--all` instead of `<owner/repo>` to sync every connected registry in parallel.
 - `aishelf registry disconnect <owner/repo>` — remove the local clone and tracking entry (does not touch GitHub).
 - `aishelf registry trust <owner/repo>` / `aishelf registry untrust <owner/repo>` — trust a registry to auto-accept its security violations, or revoke that trust.
