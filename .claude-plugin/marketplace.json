@@ -5,8 +5,9 @@
   "plugins": [
     {
       "name": "aishelf",
-      "source": ".",
-      "description": "Connect Claude to your team's shared AI workflows, rules, skills, and prompts via AIShelf."
+      "source": "./",
+      "description": "Connect Claude to your team's shared AI workflows, rules, skills, and prompts via AIShelf.",
+      "license": "UNLICENSED"
     }
   ]
 }
