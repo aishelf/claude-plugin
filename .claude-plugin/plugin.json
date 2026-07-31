@@ -1,7 +1,8 @@
 {
   "name": "aishelf",
   "description": "Connect Claude to your team's shared AI workflows, rules, skills, and prompts via AIShelf.",
-  "author": { "name": "Vedant Patil" },
+  "author": { "name": "AIShelf" },
   "homepage": "https://aishelf.dev",
-  "repository": "https://github.com/aishelf/claude-plugin"
+  "repository": "https://github.com/aishelf/claude-plugin",
+  "license": "UNLICENSED"
 }
