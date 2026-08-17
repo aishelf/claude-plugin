@@ -41,6 +41,23 @@ let the user decide.
 user's question or carry out their request — pass `--json` for structured
 output when you need to parse the result rather than show it to the user.
 
+## Keeping the CLI updated
+
+- `aishelf update [-y|--yes]` — check for and install the latest `@aishelf/cli`. `-y` skips the confirmation prompt.
+
+Unlike the initial install, **it's fine to run this one yourself without
+asking** — it's non-interactive with `-y`, idempotent (a no-op if you're
+already current), and only touches the global `@aishelf/cli` npm package,
+never the running service or any registry data. Run `aishelf update -y`
+immediately, before any other `aishelf` command this session, whenever you
+see either of these:
+- The session-start sync hook prints an `AIShelf: CLI update required` line.
+- Any `aishelf` command's stderr shows `AIShelf CLI update available: ...`.
+
+This matters beyond "missing features": this CLI talks to a versioned HTTP
+API on the local `aishelf-service`, so running stale is a real correctness
+risk, not just a cosmetic one.
+
 ## Auth
 
 These are top-level commands, not nested under an `auth` group.
