@@ -67,7 +67,7 @@ A package is a **broad grouping** of related resources (workflows/rules/skills/p
 - `aishelf package create <owner/repo> <packageId>` — create a package and push it to GitHub.
 - `aishelf package delete <owner/repo> <packageId>` — permanently delete a package, pushed to GitHub.
 
-`aishelf resource init` and `aishelf resource copy` require a `--new-package` flag when the `packageId` doesn't match an existing package (otherwise they fail, listing existing packages). Only pass it when a new package is genuinely warranted — i.e. no existing package fits the domain/capability area.
+`aishelf resource init` and `aishelf resource copy` require a `--new-package` flag when the `packageId` doesn't match an existing package (otherwise they fail, listing existing packages). Only pass it when a new package is genuinely warranted — i.e. no existing package fits the domain/capability area or if user has explicitly asked to create a new package.
 
 ## Resources (workflows, rules, skills, prompts today — see the note above if that ever changes)
 
